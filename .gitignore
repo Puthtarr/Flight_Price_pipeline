@@ -1,0 +1,14 @@
+# Ignore data lake files
+data/
+docker/minio-data/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# VSCode / PyCharm settings
+.vscode/
+.idea/
+
+# Environment files
+.env
