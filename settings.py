@@ -1,51 +1,41 @@
 import os
+import yaml
+from pathlib import Path
+from dotenv import load_dotenv
 
-# Root Directory
+load_dotenv()
+
+AVIATIONSTACK_ACCESS_KEY = os.getenv("AVIATIONSTACK_ACCESS_KEY")
+EXCHANGE_RATE_ACCESS_KEY = os.getenv("EXCHANGE_RATE_ACCESS_KEY")
+MINIO_ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY")
+MINIO_SECRET_KEY = os.getenv("MINIO_SECRET_KEY")
+print(f"✅ APILayer Key Loaded: {AVIATIONSTACK_ACCESS_KEY[:4]}... (hidden)")
+
+# Get root directory of the project
 base_dir = os.getcwd() + os.sep
-print(f'Directory Path is {base_dir}')
+print(f'Base Directory: {base_dir}')
 
-# Datalake Local Directories
+# Directory Paths
 DATA_DIR = os.path.join(base_dir, 'data')
 RAW_DATA_DIR = os.path.join(DATA_DIR, 'raw')
+RAW_EXCHANGE_RATE_DIR = os.path.join(RAW_DATA_DIR, 'exchange_rates')
+RAW_FLIGHT_DATA_DIR = os.path.join(RAW_DATA_DIR, 'flights')
 PROCESSED_DATA_DIR = os.path.join(DATA_DIR, 'processed')
-
-# Docker Directories
-DOCKER_DIR = os.path.join(base_dir, 'docker')
-DOCKER_MINIO_DIR = os.path.join(DOCKER_DIR, 'minio-datalake')
-DOCKER_PRESTO_DIR = os.path.join(DOCKER_DIR, 'presto')
-DOCKER_PRESTO_CATALOG_DIR = os.path.join(DOCKER_PRESTO_DIR, 'catalog')
-
-# Config Directory
 CONFIG_DIR = os.path.join(base_dir, 'config')
-SETTING_YAML = os.path.join(CONFIG_DIR, 'settings.yaml')
+DOCKER_DIR = os.path.join(base_dir, 'docker')
+# SCRIPTS_DIR = os.path.join(base_dir, 'scripts')
 
-# MinIO Config (Connect API / SDK)
-MINIO_CONFIG = {
-    'endpoint': 'http://localhost:9000',
-    'access_key': 'admin',
-    'secret_key': 'admin123',
-    'bucket': 'flight-data'
-}
-
-# Presto Config
-PRESTO_CONFIG = {
-    'host': 'localhost',
-    'port': 8080,
-    'catalog': 'hive',
-    'schema': 'default'
-}
-
-# ฟังก์ชันสำหรับสร้าง Directory พร้อมเช็คซ้ำ
+# Create directories (if not exist)
 def create_directories():
     directories = [
         DATA_DIR,
         RAW_DATA_DIR,
+        RAW_EXCHANGE_RATE_DIR,
+        RAW_FLIGHT_DATA_DIR,
         PROCESSED_DATA_DIR,
         CONFIG_DIR,
         DOCKER_DIR,
-        DOCKER_MINIO_DIR,
-        DOCKER_PRESTO_DIR,
-        DOCKER_PRESTO_CATALOG_DIR
+        # SCRIPTS_DIR
     ]
 
     for directory in directories:
@@ -53,8 +43,18 @@ def create_directories():
             os.makedirs(directory)
             print(f'Created directory: {directory}')
         else:
-            print(f'Already Exist: {directory}')
+            print(f'Directory exists: {directory}')
 
+# Load Config Function
+def load_config(filename='settings.yaml'):
+    config_file = os.path.join(CONFIG_DIR, filename)
+    with open(config_file, 'r') as f:
+        config = yaml.safe_load(f)
+    return config
 
-if __name__ == "__main__":
+# Run main
+if __name__ == '__main__':
     create_directories()
+
+    config = load_config()
+    print(f'Loaded config: {config}')

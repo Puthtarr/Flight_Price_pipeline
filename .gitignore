@@ -1,14 +1,22 @@
-# Ignore data lake files
-data/
-docker/minio-data/
-
-# Python cache
+# Python
 __pycache__/
 *.pyc
 
-# VSCode / PyCharm settings
+# Env / Credential Files
+*.env
+*.yml
+config/settings.yaml
+.env
+
+# Data Directories
+/data/raw/*
+/data/processed/*
+
+# Docker / Logs
+logs/
+docker-compose.override.yml
+
+# IDE
 .vscode/
 .idea/
 
-# Environment files
-.env
